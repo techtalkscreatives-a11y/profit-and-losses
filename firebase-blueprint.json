@@ -1,0 +1,116 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User accounts with system roles and operational metadata.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "username": { "type": "string" },
+        "fullName": { "type": "string" },
+        "pin": { "type": "string" },
+        "role": { "type": "string" },
+        "branch": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "username", "fullName", "pin", "role", "branch", "status"]
+    },
+    "Branch": {
+      "title": "Branch",
+      "description": "Restaurant branch details.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "address": { "type": "string" },
+        "contact": { "type": "string" },
+        "manager": { "type": "string" }
+      },
+      "required": ["id", "name", "address", "contact", "manager"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Product menu categories.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "parentType": { "type": "string" }
+      },
+      "required": ["id", "name", "parentType"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Menu items and sales products.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "categoryId": { "type": "string" },
+        "price": { "type": "number" },
+        "cost": { "type": "number" },
+        "available": { "type": "boolean" },
+        "branchId": { "type": "string" }
+      },
+      "required": ["id", "name", "categoryId", "price", "cost", "available", "branchId"]
+    },
+    "InventoryItem": {
+      "title": "InventoryItem",
+      "description": "Master stock items.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "unit": { "type": "string" },
+        "quantity": { "type": "number" },
+        "reorderLevel": { "type": "number" },
+        "parLevel": { "type": "number" },
+        "unitCost": { "type": "number" },
+        "department": { "type": "string" },
+        "branchId": { "type": "string" }
+      },
+      "required": ["id", "name", "unit", "quantity", "unitCost", "branchId"]
+    },
+    "SaleTransaction": {
+      "title": "SaleTransaction",
+      "description": "POS Completed and Voided transaction invoices.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "dateTime": { "type": "string" },
+        "branchId": { "type": "string" },
+        "cashierId": { "type": "string" },
+        "netTotal": { "type": "number" },
+        "paymentMethod": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "dateTime", "branchId", "cashierId", "netTotal", "paymentMethod", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Collection of staff user profiles."
+    },
+    "/branches/{branchId}": {
+      "schema": "Branch",
+      "description": "Active branch locations."
+    },
+    "/categories/{categoryId}": {
+      "schema": "Category",
+      "description": "Product menu categories."
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Main retail menu items."
+    },
+    "/inventory/{itemId}": {
+      "schema": "InventoryItem",
+      "description": "Central and branch stock lists."
+    },
+    "/sales/{saleId}": {
+      "schema": "SaleTransaction",
+      "description": "Sales history invoices."
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "Remix: POS Systematic",
+  "description": "Comprehensive centralized operational management platform for restaurants, featuring POS, Kitchen Display System (KDS), multi-branch tracking, inventory, procurement, recipe costing, staff attendance, events booking (Wedding \u0026 Corporate), budget management, and BIR tax compliance reporting.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
