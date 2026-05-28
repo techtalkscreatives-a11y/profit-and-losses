@@ -111,6 +111,14 @@
     "/sales/{saleId}": {
       "schema": "SaleTransaction",
       "description": "Sales history invoices."
+    },
+    "/systemConfig/{configId}": {
+      "schema": "object",
+      "description": "System-wide global configurations (like tax calculation parameters)."
+    },
+    "/test/{testId}": {
+      "schema": "object",
+      "description": "Connection sandbox verification collection."
     }
   }
 }

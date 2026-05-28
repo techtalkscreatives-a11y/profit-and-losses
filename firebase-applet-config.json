@@ -1,10 +1,10 @@
 {
-  "projectId": "startup-dryad-w8gvj",
-  "appId": "1:949439007178:web:e2a6253778e48328efa733",
-  "apiKey": "AIzaSyBSZjdGE-ppr4M_u1av9n0f_6xFkJ3v2U8",
-  "authDomain": "startup-dryad-w8gvj.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-8ef79c68-76db-4852-836f-207907a11e00",
-  "storageBucket": "startup-dryad-w8gvj.firebasestorage.app",
-  "messagingSenderId": "949439007178",
-  "measurementId": ""
+  "projectId": "plsystem-6c52d",
+  "appId": "1:1058319089218:web:21c2bb955838d8c2c577db",
+  "apiKey": "AIzaSyAPQWUI8a7GYvi09ir6UlhE1J9FsTrCKjs",
+  "authDomain": "plsystem-6c52d.firebaseapp.com",
+  "firestoreDatabaseId": "(default)",
+  "storageBucket": "plsystem-6c52d.firebasestorage.app",
+  "messagingSenderId": "1058319089218",
+  "measurementId": "G-JVSYHWZTXW"
 }

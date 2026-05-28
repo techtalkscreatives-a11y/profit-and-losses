@@ -116,6 +116,7 @@ export const UserManagementComponent: React.FC<UserManagementProps> = ({
   const [pin, setPin] = useState('');
   const [status, setStatus] = useState<'Active' | 'Inactive'>('Active');
   const [selectedModules, setSelectedModules] = useState<string[]>([]);
+  const [email, setEmail] = useState('');
 
   // Default module presets per role to make creation fast
   const applyPresetForRole = (selectedRole: UserRole) => {
@@ -163,6 +164,7 @@ export const UserManagementComponent: React.FC<UserManagementProps> = ({
     setPin(u.pin);
     setStatus(u.status);
     setSelectedModules(u.modules || []);
+    setEmail(u.email || '');
     setErrorMsg('');
     setSuccessMsg('');
   };
@@ -177,6 +179,7 @@ export const UserManagementComponent: React.FC<UserManagementProps> = ({
     setPin('');
     setStatus('Active');
     setSelectedModules([]);
+    setEmail('');
     setErrorMsg('');
     setSuccessMsg('');
   };
@@ -215,7 +218,8 @@ export const UserManagementComponent: React.FC<UserManagementProps> = ({
       branch,
       department: department.trim() || 'Operations',
       status,
-      modules: selectedModules
+      modules: selectedModules,
+      email: email.trim() || `${username.trim().toLowerCase()}@plsystem.com`
     };
 
     const success = await onAddOrUpdateUser(payload);
@@ -821,6 +825,18 @@ export const UserManagementComponent: React.FC<UserManagementProps> = ({
               </div>
             </div>
 
+            <div>
+              <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">System Login Email (Auth Email)</label>
+              <input 
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="e.g. admin@plsystem.com"
+                className="w-full rounded border border-gray-300 px-2 py-1.5 font-bold text-gray-800 text-xs focus:ring-1 focus:ring-blue-700 focus:outline-none"
+              />
+              <p className="text-[9px] text-gray-400 mt-0.5">If empty, defaults to <b>{username ? `${username.trim().toLowerCase()}@plsystem.com` : 'username@plsystem.com'}</b></p>
+            </div>
+
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Functional Group Role</label>
@@ -1022,7 +1038,8 @@ export const UserManagementComponent: React.FC<UserManagementProps> = ({
                       <div className="flex justify-between items-start">
                         <div>
                           <p className="text-xs font-black text-gray-950 uppercase tracking-tight leading-none">{u.fullName}</p>
-                          <p className="text-[10px] text-blue-700 font-extrabold uppercase mt-1 tracking-wider">@{u.username}</p>
+                          <p className="text-[10px] text-blue-700 font-extrabold uppercase mt-0.5 tracking-wider">@{u.username}</p>
+                          <p className="text-[9px] text-gray-500 font-bold lowercase mt-0.5">{u.email || `${u.username}@plsystem.com`}</p>
                         </div>
                         <div className="flex items-center gap-1.5">
                           <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded tracking-wider ${

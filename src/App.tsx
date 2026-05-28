@@ -23,7 +23,8 @@ import { CustomerLoyaltyComponent } from './components/CustomerLoyalty';
 import { 
   collection, onSnapshot, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, addDoc 
 } from 'firebase/firestore';
-import { db } from './firebase';
+import { db, auth, handleFirestoreError, OperationType } from './firebase';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 import { seedDatabaseIfNeeded, stampAuditLog, ENDPOINT_COLLECTION_MAP } from './firebaseService';
 
 // Language text pack for the application
@@ -178,8 +179,8 @@ const I18N_DICTS: Record<string, Record<string, string>> = {
 export default function App() {
   // Authentication & Session
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [loginUsername, setLoginUsername] = useState('admin');
-  const [loginPin, setLoginPin] = useState('1234');
+  const [loginEmail, setLoginEmail] = useState('admin@plsystem.com');
+  const [loginPassword, setLoginPassword] = useState('1234_secure');
   const [loginError, setLoginError] = useState('');
   
   // App General State
@@ -230,6 +231,7 @@ export default function App() {
   const [amountPaidInput, setAmountPaidInput] = useState('');
   const [paymentRefNo, setPaymentRefNo] = useState('');
   const [activeShift, setActiveShift] = useState<ShiftSession | null>(null);
+  const [transactionConfirmPin, setTransactionConfirmPin] = useState('');
 
   // HR sub-tab system state
   const [attendanceSubTab, setAttendanceSubTab] = useState<'attendance' | 'employees'>('attendance');
@@ -292,137 +294,137 @@ export default function App() {
         const list: User[] = [];
         snap.forEach((d) => list.push(d.data() as User));
         setUsers(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'users')),
       onSnapshot(collection(db, 'branches'), (snap) => {
         const list: Branch[] = [];
         snap.forEach((d) => list.push(d.data() as Branch));
         setBranches(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'branches')),
       onSnapshot(collection(db, 'categories'), (snap) => {
         const list: Category[] = [];
         snap.forEach((d) => list.push(d.data() as Category));
         setCategories(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'categories')),
       onSnapshot(collection(db, 'products'), (snap) => {
         const list: Product[] = [];
         snap.forEach((d) => list.push(d.data() as Product));
         setProducts(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'products')),
       onSnapshot(collection(db, 'inventory'), (snap) => {
         const list: InventoryItem[] = [];
         snap.forEach((d) => list.push(d.data() as InventoryItem));
         setInventory(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'inventory')),
       onSnapshot(collection(db, 'recipes'), (snap) => {
         const list: any[] = [];
         snap.forEach((d) => list.push(d.data()));
         setRecipes(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'recipes')),
       onSnapshot(collection(db, 'menuCostingRecipes'), (snap) => {
         const list: MenuCostingRecipe[] = [];
         snap.forEach((d) => list.push(d.data() as MenuCostingRecipe));
         setMenuCostingRecipes(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'menuCostingRecipes')),
       onSnapshot(collection(db, 'directPurchases'), (snap) => {
         const list: DirectPurchase[] = [];
         snap.forEach((d) => list.push(d.data() as DirectPurchase));
         setDirectPurchases(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'directPurchases')),
       onSnapshot(collection(db, 'interBranchTransfers'), (snap) => {
         const list: InterBranchTransfer[] = [];
         snap.forEach((d) => list.push(d.data() as InterBranchTransfer));
         setTransfers(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'interBranchTransfers')),
       onSnapshot(collection(db, 'wastageLogs'), (snap) => {
         const list: WastageLog[] = [];
         snap.forEach((d) => list.push(d.data() as WastageLog));
         setWastages(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'wastageLogs')),
       onSnapshot(collection(db, 'breakageLogs'), (snap) => {
         const list: BreakageLog[] = [];
         snap.forEach((d) => list.push(d.data() as BreakageLog));
         setBreakages(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'breakageLogs')),
       onSnapshot(collection(db, 'shifts'), (snap) => {
         const list: ShiftSession[] = [];
         snap.forEach((d) => list.push(d.data() as ShiftSession));
         setShifts(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'shifts')),
       onSnapshot(collection(db, 'shiftExpenses'), (snap) => {
         const list: any[] = [];
         snap.forEach((d) => list.push(d.data()));
         setShiftExpenses(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'shiftExpenses')),
       onSnapshot(collection(db, 'sales'), (snap) => {
         const list: SaleTransaction[] = [];
         snap.forEach((d) => list.push(d.data() as SaleTransaction));
         setSales(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'sales')),
       onSnapshot(collection(db, 'kdsOrders'), (snap) => {
         const list: KdsOrder[] = [];
         snap.forEach((d) => list.push(d.data() as KdsOrder));
         setKdsOrders(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'kdsOrders')),
       onSnapshot(collection(db, 'productionReports'), (snap) => {
         const list: ProductionReport[] = [];
         snap.forEach((d) => list.push(d.data() as ProductionReport));
         setProductions(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'productionReports')),
       onSnapshot(collection(db, 'rndLogs'), (snap) => {
         const list: RndLog[] = [];
         snap.forEach((d) => list.push(d.data() as RndLog));
         setRndLogs(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'rndLogs')),
       onSnapshot(collection(db, 'complimentaries'), (snap) => {
         const list: any[] = [];
         snap.forEach((d) => list.push(d.data()));
         setComplimentaries(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'complimentaries')),
       onSnapshot(collection(db, 'cafeteriaReports'), (snap) => {
         const list: any[] = [];
         snap.forEach((d) => list.push(d.data()));
         setCafeteria(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'cafeteriaReports')),
       onSnapshot(collection(db, 'attendance'), (snap) => {
         const list: any[] = [];
         snap.forEach((d) => list.push(d.data()));
         setAttendance(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'attendance')),
       onSnapshot(collection(db, 'loans'), (snap) => {
         const list: any[] = [];
         snap.forEach((d) => list.push(d.data()));
         setLoans(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'loans')),
       onSnapshot(collection(db, 'reservations'), (snap) => {
         const list: Reservation[] = [];
         snap.forEach((d) => list.push(d.data() as Reservation));
         setReservations(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'reservations')),
       onSnapshot(collection(db, 'customers'), (snap) => {
         const list: CustomerCard[] = [];
         snap.forEach((d) => list.push(d.data() as CustomerCard));
         setCustomers(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'customers')),
       onSnapshot(collection(db, 'budgets'), (snap) => {
         const list: Budget[] = [];
         snap.forEach((d) => list.push(d.data() as Budget));
         setBudgets(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'budgets')),
       onSnapshot(collection(db, 'weddings'), (snap) => {
         const list: WeddingBooking[] = [];
         snap.forEach((d) => list.push(d.data() as WeddingBooking));
         setWeddings(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'weddings')),
       onSnapshot(collection(db, 'corporates'), (snap) => {
         const list: any[] = [];
         snap.forEach((d) => list.push(d.data()));
         setCorporateBookings(list);
-      }),
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'corporates')),
       onSnapshot(doc(db, 'systemConfig', 'taxInfo'), (snap) => {
         if (snap.exists()) {
           setTaxInfo(snap.data() as TaxInfo);
         }
-      })
+      }, (error) => handleFirestoreError(error, OperationType.GET, 'systemConfig/taxInfo'))
     ];
 
     return () => {
@@ -454,28 +456,68 @@ export default function App() {
     e.preventDefault();
     setLoginError('');
     try {
+      let authUser;
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, loginEmail.trim(), loginPassword);
+        authUser = userCredential.user;
+      } catch (authErr: any) {
+        console.warn("Direct login failed, checking fallback seeding:", authErr);
+        // Fallback: If it's a seeded user (like admin), create Auth user dynamically if username matches the seeded PIN
+        const potentialMatch = users.find(
+          (u) => 
+            (u.email && u.email.toLowerCase() === loginEmail.toLowerCase().trim()) ||
+            (`${u.username.toLowerCase()}@plsystem.com` === loginEmail.toLowerCase().trim())
+        );
+        if (potentialMatch && loginPassword === `${potentialMatch.pin}_secure`) {
+          try {
+            const userCredential = await createUserWithEmailAndPassword(auth, loginEmail.trim(), loginPassword);
+            authUser = userCredential.user;
+          } catch (createErr) {
+            console.error("Transparent seed signup error:", createErr);
+            setLoginError("Invalid email or password combination.");
+            return;
+          }
+        } else {
+          setLoginError("Invalid email or password combination.");
+          return;
+        }
+      }
+
+      // Find local profile
       const matched = users.find(
-        (u) => u.username.toLowerCase() === loginUsername.toLowerCase() && u.pin === loginPin
+        (u) => 
+          (u.email && u.email.toLowerCase() === authUser.email?.toLowerCase()) ||
+          (`${u.username.toLowerCase()}@plsystem.com` === authUser.email?.toLowerCase())
       );
+
       if (!matched) {
-        setLoginError("Invalid username or PIN combination.");
+        setLoginError("Firebase authenticated successfully, but no local Employee profile was found for this email.");
         return;
       }
+
       if (matched.status === 'Inactive') {
         setLoginError("Employee account is locked/inactive.");
+        await signOut(auth);
         return;
       }
+
       setCurrentUser(matched);
       if (matched.branch !== 'All') {
         setActiveBranch(matched.branch);
       }
-      await stampAuditLog(matched.id, "Login", "Security", `User ${matched.fullName} logged in successfully via Firestore.`);
+      await stampAuditLog(matched.id, "Login", "Security", `User ${matched.fullName} logged in successfully via Firebase Auth email/password.`);
     } catch (error) {
+      console.error(error);
       setLoginError("Failed to authenticate to backend database");
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (e) {
+      console.error("Signout error:", e);
+    }
     setCurrentUser(null);
     setCart([]);
     setActiveShift(null);
@@ -863,6 +905,7 @@ export default function App() {
   const handleProceedCheckout = () => {
     if (cart.length === 0) return alert("POS Cart is empty");
     if (!activeShift) return alert("No active shift session opened. Please open shift to transact.");
+    setTransactionConfirmPin('');
     setCheckoutModalOpen(true);
   };
 
@@ -873,6 +916,14 @@ export default function App() {
     }
     if (paymentMethod !== 'Cash' && !paymentRefNo.trim()) {
       return alert("E-wallet reference trace id required.");
+    }
+
+    if (!transactionConfirmPin) {
+      return alert("Transaction confirmation PIN is required.");
+    }
+
+    if (transactionConfirmPin !== currentUser?.pin) {
+      return alert("Invalid 4-digit transaction confirmation PIN.");
     }
 
     const txPayload: SaleTransaction = {
@@ -1070,26 +1121,26 @@ export default function App() {
 
           <form onSubmit={handleLogin} className="space-y-3">
             <div className="form-group text-xs text-left">
-              <label className="text-[10px] font-bold uppercase text-gray-500">Employee Login Username</label>
+              <label className="text-[10px] font-bold uppercase text-gray-500">Employee Login Email Address</label>
               <input
-                type="text"
-                value={loginUsername}
-                onChange={(e) => setLoginUsername(e.target.value)}
-                placeholder="Enter Username"
+                type="email"
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                placeholder="e.g. admin@plsystem.com"
                 className="mt-1 w-full rounded border border-gray-300 p-2 font-bold focus:ring-1 focus:ring-blue-500 outline-none"
                 required
               />
             </div>
 
             <div className="form-group text-xs text-left">
-              <label className="text-[10px] font-bold uppercase text-gray-500">Employee Access PIN</label>
+              <label className="text-[10px] font-bold uppercase text-gray-500">Employee Login Password</label>
               <input
                 type="password"
-                value={loginPin}
-                onChange={(e) => setLoginPin(e.target.value)}
-                placeholder="4-Digit PIN"
-                className="mt-1 w-full rounded border border-gray-300 p-2 font-mono text-center font-bold tracking-widest"
-                maxLength={4}
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                placeholder="Enter Firebase Password"
+                className="mt-1 w-full rounded border border-gray-300 p-2 font-bold"
+                required
               />
             </div>
 
@@ -2458,6 +2509,21 @@ export default function App() {
                   />
                 </div>
               )}
+
+              <div className="border-t border-gray-200 pt-2">
+                <label className="text-[10px] font-bold text-gray-550 uppercase flex items-center gap-1">
+                  🔑 Cashier Confirmation PIN
+                </label>
+                <input
+                  type="password"
+                  value={transactionConfirmPin}
+                  onChange={(e) => setTransactionConfirmPin(e.target.value.replace(/\D/g, ''))}
+                  placeholder="Enter 4-Digit PIN Code"
+                  maxLength={4}
+                  className="mt-1 w-full rounded border p-2 text-center font-mono font-bold tracking-widest text-sm focus:ring-1 focus:ring-blue-500 outline-none"
+                  required
+                />
+              </div>
 
               {/* Math summaries */}
               <div className="bg-gray-100 p-3 rounded font-mono text-[11px] leading-relaxed space-y-1">

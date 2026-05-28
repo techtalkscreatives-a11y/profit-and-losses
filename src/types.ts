@@ -10,6 +10,7 @@ export interface User {
   department?: string;
   status: 'Active' | 'Inactive';
   modules?: string[];
+  email?: string;
 }
 
 export interface Branch {

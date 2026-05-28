@@ -93,6 +93,12 @@ service cloud.firestore {
     match /taxInfo/{taxId} {
       allow read, write: if true;
     }
+    match /systemConfig/{configId} {
+      allow read, write: if true;
+    }
+    match /test/{testId} {
+      allow read, write: if true;
+    }
     match /auditLogs/{logId} {
       allow read, write: if true;
     }
